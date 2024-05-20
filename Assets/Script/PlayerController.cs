@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -51,10 +52,18 @@ public class PlayerController : MonoBehaviour
     [Header ("Animation")]
     public Animator playerAnimator;
 
+    [Header ("Death")]
+    public float deathHeight = -200f;
+    [SerializeField] private GameObject deathEffect;
+
+
+    [Header ("Text")]
+    public GameObject text;
+
     // Start is called before the first frame update
     void Start()
     {
-       
+       Time.timeScale = 1f;
     }
 
     // Update is called once per frame
@@ -65,6 +74,7 @@ public class PlayerController : MonoBehaviour
         Gravity();
         WallSlide();
         ProcessWallJump();
+        Die();
         
 
         if(!isWallJumping)
@@ -206,5 +216,22 @@ public class PlayerController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         horizontalMovement = context.ReadValue<Vector2>().x;
+    }
+    public void Die()
+    {
+        if (transform.position.y < deathHeight)
+        {
+            Time.timeScale = 0f;
+            SceneManager.LoadScene(3);
+           
+        }
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Text")
+        {
+            text.SetActive(true);
+        }
     }
 }
